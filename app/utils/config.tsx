@@ -10,8 +10,10 @@ import { OrderlyActiveIcon, OrderlyIcon } from "../components/icons/orderly";
 import { withBasePath } from "./base-path";
 import { PortfolioActiveIcon, PortfolioInactiveIcon, TradingActiveIcon, TradingInactiveIcon, LeaderboardActiveIcon, LeaderboardInactiveIcon, MarketsActiveIcon, MarketsInactiveIcon, useScreen, Flex, cn } from "@orderly.network/ui";
 import { getRuntimeConfig, getRuntimeConfigBoolean, getRuntimeConfigNumber } from "./runtime-config";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import CustomLeftNav from "@/components/CustomLeftNav";
+import { HomeNavbar } from "@/components/home/HomeNavbar";
+import PriceCarousel from "@/components/PriceCarousel";
 
 interface MainNavItem {
   name: string;
@@ -266,61 +268,113 @@ export const useOrderlyConfig = () => {
             {components.walletConnect}
           </Flex>
         </Flex>
+        </Flex >
       )
     };
 
-    return {
-      scaffold: {
-        mainNavProps,
-        bottomNavProps: {
-          mainMenus: bottomNavMenus,
-        },
-        footerProps: {
-          telegramUrl: getRuntimeConfig('VITE_TELEGRAM_URL') || undefined,
-          discordUrl: getRuntimeConfig('VITE_DISCORD_URL') || undefined,
-          twitterUrl: getRuntimeConfig('VITE_TWITTER_URL') || undefined,
-          trailing: <span className="oui-text-2xs oui-text-base-contrast-54">Charts powered by <a href="https://tradingview.com" target="_blank" rel="noopener noreferrer">TradingView</a></span>,
-          logo: (
-            <div className="oui-flex oui-items-center oui-gap-1.5 oui-text-2xs oui-text-base-contrast-54">
-              <span>Powered by</span>
-              <img src={withBasePath("/shard-logo.svg")} alt="ShardZero" className="oui-h-4" />
-              <span>ShardZero</span>
-            </div>
-          ),
-          copyright: <span className="oui-text-2xs oui-text-base-contrast-54">© 2024 ShardZero. All rights reserved.</span>
+// 01.xyz Alignment: Strict Home Page Isolation
+if (isHomePage) {
+  return {
+    scaffold: {
+      mainNavProps: {
+        ...mainNavProps,
+        // Force minimal navbar for Home
+        customRender: (components) => (
+          <HomeNavbar
+            components={components}
+            menus={translatedEnabledMenus}
+            customMenus={customMenus}
+            socials={{
+              twitter: getRuntimeConfig('VITE_TWITTER_URL'),
+              discord: getRuntimeConfig('VITE_DISCORD_URL'),
+              telegram: getRuntimeConfig('VITE_TELEGRAM_URL'),
+            }}
+          />
+        )
+      },
+      // HIDE Mobile Nav on Home
+      bottomNavProps: undefined,
+      // Disable Scaffold Footer entirely on Home to prevent sticky lines
+      footerProps: undefined,
+    },
+    orderlyAppProvider: {
+      appIcons: {
+        main:
+          getRuntimeConfigBoolean('VITE_HAS_PRIMARY_LOGO')
+            ? { component: <img src={withBasePath(getRuntimeConfig('VITE_PRIMARY_LOGO_PATH') || "/logo.webp")} alt="logo" style={{ height: "42px", display: "block", width: "auto" }} /> }
+            : { component: <img src={withBasePath("/shard.svg")} alt="logo" style={{ height: "36px", display: "block", width: "auto" }} /> },
+        secondary: {
+          img: getRuntimeConfigBoolean('VITE_HAS_SECONDARY_LOGO')
+            ? withBasePath(getRuntimeConfig('VITE_SECONDARY_LOGO_PATH') || "/logo-secondary.webp")
+            : withBasePath("/shard-logo-secondary.svg"),
         },
       },
-      orderlyAppProvider: {
-        appIcons: {
-          main:
-            getRuntimeConfigBoolean('VITE_HAS_PRIMARY_LOGO')
-              ? { component: <img src={withBasePath(getRuntimeConfig('VITE_PRIMARY_LOGO_PATH') || "/logo.webp")} alt="logo" style={{ height: "42px" }} /> }
-              : { img: withBasePath("/shard-logo.svg") },
-          secondary: {
-            img: getRuntimeConfigBoolean('VITE_HAS_SECONDARY_LOGO')
-              ? withBasePath(getRuntimeConfig('VITE_SECONDARY_LOGO_PATH') || "/logo-secondary.webp")
-              : withBasePath("/shard-logo-secondary.svg"),
-          },
-        },
+    },
+    tradingPage: {
+      tradingViewConfig: {
+        scriptSRC: withBasePath("/tradingview/charting_library/charting_library.js"),
+        library_path: withBasePath("/tradingview/charting_library/"),
+        customCssUrl: withBasePath("/tradingview/chart.css"),
+        colorConfig: getColorConfig(),
       },
-      tradingPage: {
-        tradingViewConfig: {
-          scriptSRC: withBasePath("/tradingview/charting_library/charting_library.js"),
-          library_path: withBasePath("/tradingview/charting_library/"),
-          customCssUrl: withBasePath("/tradingview/chart.css"),
-          colorConfig: getColorConfig(),
-        },
-        sharePnLConfig: {
-          backgroundImages: getPnLBackgroundImages(),
-          color: "rgba(255, 255, 255, 0.98)",
-          profitColor: "rgba(41, 223, 169, 1)",
-          lossColor: "rgba(245, 97, 139, 1)",
-          brandColor: "rgba(255, 255, 255, 0.98)",
-          // ref
-          refLink: typeof window !== 'undefined' ? window.location.origin : undefined,
-          refSlogan: getRuntimeConfig('VITE_ORDERLY_BROKER_NAME') || "Orderly Network",
-        },
+      sharePnLConfig: {
+        backgroundImages: getPnLBackgroundImages(),
+        color: "rgba(255, 255, 255, 0.98)",
+        profitColor: "rgba(41, 223, 169, 1)",
+        lossColor: "rgba(245, 97, 139, 1)",
+        brandColor: "rgba(255, 255, 255, 0.98)",
+        // ref
+        refLink: typeof window !== 'undefined' ? window.location.origin : undefined,
+        refSlogan: getRuntimeConfig('VITE_ORDERLY_BROKER_NAME') || "Shard DEX",
       },
-    };
+    },
+  };
+}
+
+return {
+  scaffold: {
+    mainNavProps,
+    bottomNavProps: {
+      mainMenus: bottomNavMenus,
+    },
+    footerProps: {
+      telegramUrl: getRuntimeConfig('VITE_TELEGRAM_URL') || undefined,
+      discordUrl: getRuntimeConfig('VITE_DISCORD_URL') || undefined,
+      twitterUrl: getRuntimeConfig('VITE_TWITTER_URL') || undefined,
+      trailing: <PriceCarousel />,
+    },
+  },
+  orderlyAppProvider: {
+    appIcons: {
+      main:
+        getRuntimeConfigBoolean('VITE_HAS_PRIMARY_LOGO')
+          ? { component: <img src={withBasePath(getRuntimeConfig('VITE_PRIMARY_LOGO_PATH') || "/logo.webp")} alt="logo" style={{ height: "42px" }} /> }
+          : { img: withBasePath("/shard-logo.svg") },
+      secondary: {
+        img: getRuntimeConfigBoolean('VITE_HAS_SECONDARY_LOGO')
+          ? withBasePath(getRuntimeConfig('VITE_SECONDARY_LOGO_PATH') || "/logo-secondary.webp")
+          : withBasePath("/shard-logo-secondary.svg"),
+      },
+    },
+  },
+  tradingPage: {
+    tradingViewConfig: {
+      scriptSRC: withBasePath("/tradingview/charting_library/charting_library.js"),
+      library_path: withBasePath("/tradingview/charting_library/"),
+      customCssUrl: withBasePath("/tradingview/chart.css"),
+      colorConfig: getColorConfig(),
+    },
+    sharePnLConfig: {
+      backgroundImages: getPnLBackgroundImages(),
+      color: "rgba(255, 255, 255, 0.98)",
+      profitColor: "rgba(41, 223, 169, 1)",
+      lossColor: "rgba(245, 97, 139, 1)",
+      brandColor: "rgba(255, 255, 255, 0.98)",
+      // ref
+      refLink: typeof window !== 'undefined' ? window.location.origin : undefined,
+      refSlogan: getRuntimeConfig('VITE_ORDERLY_BROKER_NAME') || "Orderly Network",
+    },
+  },
+};
   }, [t, isMobile]);
 };
