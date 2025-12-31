@@ -14,6 +14,25 @@
   <link rel="apple-touch-icon" href="./favicon.webp" />
 
   <title>Shard DEX</title>
+  <script>
+    (function () {
+      // ShardZero Footer Fix v2.0 (DOM Enforcer)
+      // This observer handles cases where React/CSS changes are overridden or ignored.
+      const observer = new MutationObserver(() => {
+        // Target specific SVG by unique viewbox found in user report
+        // <svg ... viewBox="0 0 45 14" ... >
+        const badSvgs = document.querySelectorAll('footer svg[viewBox="0 0 45 14"]');
+        badSvgs.forEach(svg => {
+          if (svg.style.display !== 'none') {
+            svg.style.display = 'none';
+            // Also hide parent if it looks like the logo wrapper (often a link or div)
+            // Optional: svg.parentElement.style.display = 'none';
+          }
+        });
+      });
+      observer.observe(document.documentElement, { childList: true, subtree: true });
+    })();
+  </script>
 </head>
 
 <body>
