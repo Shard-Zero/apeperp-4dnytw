@@ -16,7 +16,7 @@ export default function App() {
         <html lang={seoConfig.language || defaultLanguage} />
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" type="image/webp" href={withBasePath(getRuntimeConfig('VITE_FAVICON_PATH') || "/favicon.webp")} />
+        <link rel="icon" href={withBasePath(getRuntimeConfig('VITE_FAVICON_PATH') || "/favicon.webp")} />
       </Helmet>
       <HttpsRequiredWarning />
       <OrderlyProvider>
