@@ -1,12 +1,12 @@
 // Shard Zero Generated Configuration
-// Generated at: 2025-12-30T15:00:03.881Z
+// Generated at: 2025-12-31T03:29:58.597Z
 
 export const appConfig = {
     // Branding
     logos: {
-        main: "/logo.svg",
-        secondary: "/logo-secondary.svg",
-        favicon: "/favicon.ico",
+        main: "/logo.png",
+        secondary: "/logo-secondary.png",
+        favicon: "/favicon.png",
     },
     
     // Footer Configuration
@@ -22,7 +22,7 @@ export const appConfig = {
     // PnL Sharing Configuration
     sharePnLConfig: {
         backgroundImages: ["/pnl/poster_bg_1.png","/pnl/poster_bg_2.png","/pnl/poster_bg_3.png","/pnl/poster_bg_4.png"],
-        brandColor: "#FF6600",
+        brandColor: "#29DFA9",
     },
 };
 

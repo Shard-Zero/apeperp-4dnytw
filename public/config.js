@@ -1,10 +1,10 @@
 window.__RUNTIME_CONFIG__ = {
   "VITE_APP_NAME": "ApePerp",
-  "VITE_APP_DESCRIPTION": "A powerful perpetual trading DEX powered by Orderly Network",
+  "VITE_APP_DESCRIPTION": "Your Advanced Perpetual DEX",
   "VITE_ORDERLY_BROKER_NAME": "ApePerp",
   "VITE_BASE_URL": "/apeperp-4dnytw/",
   "VITE_DISABLE_MAINNET": "false",
-  "VITE_DISABLE_TESTNET": "false",
+  "VITE_DISABLE_TESTNET": "true",
   "VITE_ORDERLY_MAINNET_CHAINS": "",
   "VITE_ORDERLY_TESTNET_CHAINS": "",
   "VITE_DEFAULT_CHAIN": "",
@@ -13,7 +13,7 @@ window.__RUNTIME_CONFIG__ = {
   "VITE_PRIVY_APP_ID": "",
   "VITE_DISABLE_EVM_WALLETS": "false",
   "VITE_DISABLE_SOLANA_WALLETS": "false",
-  "VITE_PRIMARY_LOGO_PATH": "",
-  "VITE_SECONDARY_LOGO_PATH": "",
-  "VITE_FAVICON_PATH": ""
+  "VITE_PRIMARY_LOGO_PATH": "/logo.png",
+  "VITE_SECONDARY_LOGO_PATH": "/logo-secondary.png",
+  "VITE_FAVICON_PATH": "/favicon.png"
 };
