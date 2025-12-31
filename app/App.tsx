@@ -17,6 +17,12 @@ export default function App() {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href={withBasePath(getRuntimeConfig('VITE_FAVICON_PATH') || "/favicon.webp")} />
+        <style>{`
+          /* Force hide default Orderly footer logo by attribute matching */
+          footer svg[width="45"][height="14"] {
+            display: none !important;
+          }
+        `}</style>
       </Helmet>
       <HttpsRequiredWarning />
       <OrderlyProvider>
